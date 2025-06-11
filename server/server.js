@@ -8,27 +8,38 @@ import userRouter from "./Routes/UserRoute.js";
 import IssueRouter from "./Routes/User/EmpIssueRoute.js";
 import Adminrouter from "./Routes/Admin/AdminRoutes.js";
 
+dotenv.config();
+
 const app = express();
 const port = process.env.PORT || 4000;
-dotenv.config();
+
 ConnectDb();
 app.use(express.json());
 app.use(cookieParser());
 
-const allowedOrigin = ['http://localhost:5173']
+// ✅ Allow both local and deployed frontend origins
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://comptrack-frontend.onrender.com'
+];
 
-app.use(cors({origin:allowedOrigin  , credentials: true }));
-app.use("/getuser", (req, res) => {
-  res.send("chala");
-});
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+}));
+
+// Routes
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
-
-// User Issue Endpoint
-app.use("/api/issue" , IssueRouter)
-// Use admin routes
+app.use("/api/issue", IssueRouter);
 app.use('/api/admin', Adminrouter);
 
 app.listen(port, () => {
-  console.log(`server started on PORT ${port}`);
+  console.log(`Server started on PORT ${port}`);
 });
