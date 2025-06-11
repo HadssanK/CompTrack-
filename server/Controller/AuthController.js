@@ -35,9 +35,9 @@ export const Register = async (req , res)=>{
 
     await User.save();
 
-    const Token = jwt.sign({ id: User._id }, process.env.SECURTY_KEY , { expiresIn: '7d' });
+    const token = jwt.sign({ id: User._id }, process.env.SECURTY_KEY , { expiresIn: '7d' });
 
-    res.cookie('Token' , Token , {
+    res.cookie('token' , token , {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'Production',
         sameSite: process.env.NODE_ENV === 'Production' ? 'none' : 'strict',
@@ -97,9 +97,9 @@ export const Login = async (req , res) => {
       });
     }
 
-    const Token = jwt.sign({ id: user._id, role: user.role }, process.env.SECURTY_KEY, { expiresIn: '7d' });
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.SECURTY_KEY, { expiresIn: '7d' });
 
-    res.cookie('Token', Token, {
+    res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'Production',
       sameSite: process.env.NODE_ENV === 'Production' ? 'none' : 'strict',
@@ -109,7 +109,7 @@ export const Login = async (req , res) => {
     return res.json({
       success: true,
       role: user.role,  // 🔁 role bhejna zaroori hai for frontend routing
-      token: Token  // <-- yahan token bhi bhej do
+      token: token  // <-- yahan token bhi bhej do
     });
 
   } catch(error) {
@@ -122,7 +122,7 @@ export const Login = async (req , res) => {
 
 export const GetAllUsers = async (req, res) => {
   try {
-    const token = req.cookies.Token;
+    const token = req.cookies.token;
     if (!token) {
       return res.status(401).json({ success: false, message: "Unauthorized" });
     }
@@ -150,7 +150,7 @@ export const GetAllUsers = async (req, res) => {
 
 export const Logout = async(req , res)=>{
 try{
-    res.clearCookie('Token' , {
+    res.clearCookie('token' , {
         httponly : true,
             secure : process.env.NODE_ENV ==='Production',
             sameSite : process.env.NODE_ENV ==='Production' ? 'none' :'strict',

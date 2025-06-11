@@ -6,14 +6,19 @@ export const AppContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
   axios.defaults.withCredentials = true;
-  const backendUrl ="https://comptrack-backend.onrender.com";
+
+  // ✅ Use dynamic backend URL based on environment
+  const backendUrl =
+    import.meta.env.MODE === "development"
+      ? "http://localhost:4000"
+      : "https://comptrack-backend.onrender.com";
 
   const [isLoggedin, setIsLoggedin] = useState(false);
   const [userData, setUserData] = useState([]);
   const [getIssue, SetGetIssue] = useState([]);
   const [userIssues, setUserIssues] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-    const [allUsers, setAllUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
 
   const getAuthState = async () => {
     try {
@@ -21,8 +26,7 @@ export const AppContextProvider = ({ children }) => {
       if (data.success) {
         setIsLoggedin(true);
         await getUserData();
-       await fetchAllUsers();
-
+        await fetchAllUsers();
       }
     } catch (err) {
       toast.error(err.message);
@@ -31,19 +35,15 @@ export const AppContextProvider = ({ children }) => {
     }
   };
 
-   const fetchAllUsers = async () => {
+  const fetchAllUsers = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/api/auth/all-users");
-      setAllUsers(response.data.users); // ✅ correct hai
- // ya response.data.users agar nested ho
+      const response = await axios.get(`${backendUrl}/api/auth/all-users`);
+      setAllUsers(response.data.users);
     } catch (error) {
       console.error("Failed to fetch users", error);
     }
   };
 
-  // useEffect(() => {
-  // }, []);
-  
   useEffect(() => {
     getAuthState();
   }, []);
@@ -72,7 +72,9 @@ export const AppContextProvider = ({ children }) => {
 
   const fetchUserIssues = async (userName) => {
     try {
-      const res = await fetch(`${backendUrl}/api/issue/issues/user/${userName}`);
+      const res = await fetch(`${backendUrl}/api/issue/issues/user/${userName}`, {
+        credentials: "include",
+      });
       if (!res.ok) throw new Error("Failed to fetch user issues");
       const data = await res.json();
       setUserIssues(data);
@@ -105,6 +107,7 @@ export const AppContextProvider = ({ children }) => {
     try {
       const res = await fetch(`${backendUrl}/api/issue/issues/${id}`, {
         method: "DELETE",
+        credentials: "include",
       });
 
       if (!res.ok) throw new Error("Failed to delete issue");
@@ -131,7 +134,7 @@ export const AppContextProvider = ({ children }) => {
     submitIssue,
     deleteUserIssue,
     isLoading,
-    allUsers
+    allUsers,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
