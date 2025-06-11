@@ -8,10 +8,7 @@ export const AppContextProvider = ({ children }) => {
   axios.defaults.withCredentials = true;
 
   // ✅ Use dynamic backend URL based on environment
-  const backendUrl =
-    import.meta.env.MODE === "development"
-      ? "http://localhost:4000"
-      : "https://comptrack-backend.onrender.com";
+  const backendUrl = "https://comptrack-backend.onrender.com";
 
   const [isLoggedin, setIsLoggedin] = useState(false);
   const [userData, setUserData] = useState([]);
