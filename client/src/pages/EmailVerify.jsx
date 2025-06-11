@@ -9,7 +9,7 @@ import Lottie from "lottie-react";
 const EmailVerify = () => {
   axios.defaults.withCredentials = true;
   const navigate = useNavigate()
-const {isLoggedin , userData , getUserData } = useContext(AppContext)
+const {isLoggedin , userData , getUserData , backendUrl} = useContext(AppContext)
 
   const inputRefs = useRef([]);
   const handleInput = (e, index) => {
@@ -35,7 +35,7 @@ const {isLoggedin , userData , getUserData } = useContext(AppContext)
       e.preventDefault();
       const otpArray = inputRefs.current.map(e=> e.value)
       const Otp = otpArray.join('')
-      const {data} = await axios.post("http://localhost:4000/api/auth/verify-account", {Otp})
+      const {data} = await axios.post(`${backendUrl}/api/auth/verify-account`, {Otp})
       
       
       if(data.success){
