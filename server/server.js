@@ -18,12 +18,21 @@ app.use(express.json());
 app.use(cookieParser());
 
 // ✅ Allow both local and deployed frontend origins
-// const allowedOrigins = [
-//   'http://localhost:5173',
-//   'https://comptrack-frontend.onrender.com'
-// ];
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://comptrack-frontend.onrender.com'
+];
 
-app.use(cors());
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+}));
 
 // Routes
 app.use("/api/auth", authRouter);
