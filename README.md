@@ -19,8 +19,8 @@ A platform where employees can submit network issues, office problems, or any ty
 - **Frontend:** React.js, Tailwind CSS (or CSS framework you used)
 - **Backend:** Node.js, Express.js
 - **Database:** MongoDB
-- **Authentication:** JWT / Session (specify which one)
-- **Storage (if used):** Multer for file uploads
+- **Authentication:** JWT / Session 
+
 
 ---
 
